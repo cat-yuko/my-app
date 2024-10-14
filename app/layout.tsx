@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { SidenavProvider } from "@/app/context/sidenavContext";
+import Header from "@/app/components/header";
+import Sidenav from "@/app/components/sidenav";
+import Container from "@/app/components/container";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,7 +32,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SidenavProvider>
+          <Header />
+          <Sidenav />
+          <main style={{ position: "relative" }}>
+            <Container>{children}</Container>
+          </main>
+        </SidenavProvider>
       </body>
     </html>
   );
