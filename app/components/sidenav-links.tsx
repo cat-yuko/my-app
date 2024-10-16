@@ -4,6 +4,8 @@ import {
   Home as HomeIcon,
   Pets as PetsIcon,
   MusicNote as MusicNoteIcon,
+  PictureAsPdf as PictureAsPdfIcon,
+  ViewInAr as ViewInArIcon,
 } from "@mui/icons-material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,6 +16,8 @@ const links = [
   { name: "Home", href: "/", icon: HomeIcon },
   { name: "Pets", href: "/pets", icon: PetsIcon },
   { name: "Music", href: "/music", icon: MusicNoteIcon },
+  { name: "Pdf", href: "/pdf", icon: PictureAsPdfIcon },
+  { name: "3D", href: "/view", icon: ViewInArIcon },
 ];
 
 export default function NavLinks() {

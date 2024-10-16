@@ -1,11 +1,25 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
-const SidenavContext = createContext();
+// コンテキストの型定義
+interface SidenavContextType {
+  isSidenavOpen: boolean;
+  toggleSidenav: () => void;
+}
 
-export const SidenavProvider = ({ children }) => {
-  const [isSidenavOpen, setIsSidenavOpen] = useState(false);
+// デフォルト値を設定
+const defaultContextValue: SidenavContextType = {
+  isSidenavOpen: false,
+  toggleSidenav: () => {},
+};
+
+const SidenavContext = createContext<SidenavContextType>(defaultContextValue);
+
+export const SidenavProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [isSidenavOpen, setIsSidenavOpen] = useState<boolean>(false);
 
   const toggleSidenav = () => {
     setIsSidenavOpen((prev) => !prev);
