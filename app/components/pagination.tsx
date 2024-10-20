@@ -25,7 +25,7 @@ export default function Pagination({ pathname, totalPages, currentPage }) {
         href={`${pathname}/?page=${currentPage - 1}`}
         className={`${styles.button} ${currentPage === 1 ? styles.disabled : ""}`}
       >
-        Previous
+        Prev
       </Link>
 
       {/* ページ番号 */}
