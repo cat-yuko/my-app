@@ -1,7 +1,13 @@
 import Link from "next/link";
 import styles from "@/app/components/pagination.module.css";
 
-export default function Pagination({ pathname, totalPages, currentPage }) {
+interface PaginationProps {
+  pathname: string;
+  totalPages: number;
+  currentPage: number;
+}
+
+export default function Pagination({ pathname, totalPages, currentPage }: PaginationProps) {
   // 表示するページを設定
   const pageNumbers = [];
   // 現在のページの前後に表示するページ数

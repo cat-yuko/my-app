@@ -1,10 +1,8 @@
 "use client";
 
-import {useState, useEffect} from 'react'
+import {useEffect} from 'react'
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import Pagination from "@/app/components/pagination";
-import Pagination_mui from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
 
 // 1ページあたりのアイテム数
 const ITEMS_PER_PAGE = 5;
@@ -25,15 +23,11 @@ export default function Home() {
   // 数値に変換
   let currentPage = parseInt(page, 10);
 
-  const [mui_page, setPage] = useState(1)
-
-  const data = getData();
+   const data = getData();
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
   if (currentPage > totalPages) {
     currentPage = totalPages;
   }
-  console.log("🐖=====>"+currentPage);
-  console.log("🚀=====>"+totalPages)
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedData = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -41,7 +35,6 @@ export default function Home() {
   useEffect(() => {
     // currentPageが変わったらクエリパラメータを更新してページを再読み込み
     router.push(`?page=${currentPage}`);
-    setPage(currentPage)
   }, [currentPage, router]);
 
   return (
@@ -58,14 +51,6 @@ export default function Home() {
         totalPages={totalPages}
         currentPage={currentPage}
       />
-      <Stack spacing={2}>
-      <Pagination_mui 
-        count={totalPages} 
-        page={mui_page} 
-        onChange={(e, mui_page) =>setPage(mui_page)}
-        color="secondary"
-      />
-    </Stack>
     </div>
   );
 }
