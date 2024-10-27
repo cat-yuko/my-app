@@ -12,33 +12,46 @@ export default function Pagination({ pathname, totalPages, currentPage }) {
   // 最初のページを追加
   pageNumbers.push(1);
 
-  // 中間ページ
-  // 省略記号
-  if (currentPage >= 5) {
-    pageNumbers.push("...");
-  }
+  if (totalPages >= 3) {
+    // 中間ページ
 
-  let start = currentPage - 1;
-  let end = currentPage + 1;
-  if (currentPage < 5) {
-    start = 2;
-    end = 5;
-  } else if (currentPage > totalPages - 4) {
-    start = totalPages - 4;
-    end = totalPages - 1;
-  }
+    // 省略記号
+    if (totalPages > maxDisplayedPages 
+      && currentPage >= maxDisplayedPages - 2) {
+      pageNumbers.push("...");
+    }
 
-  for (let i = start; i <= end; i++) {
-    pageNumbers.push(i);
-  }
+    let start;
+    let end;
+    if (totalPages > maxDisplayedPages) {
+      if (currentPage < maxDisplayedPages - 2) {
+        start = 2;
+        end = maxDisplayedPages - 2;
+      } else if (currentPage > totalPages - (maxDisplayedPages - 3)) {
+        start = totalPages - (maxDisplayedPages - 3);
+        end = totalPages - 1;
+      } else {
+        start = currentPage - displayRange;
+        end = currentPage + displayRange;
+      }
+    } else {
+      start = 2;
+      end = totalPages - 1;
+    }
 
-  // 省略記号
-  if (totalPages - 4 >= currentPage) {
-    pageNumbers.push("...");
+    for (let i = start; i <= end; i++) {
+      pageNumbers.push(i);
+    }
+
+    // 省略記号
+    if (totalPages > maxDisplayedPages 
+      && totalPages - (maxDisplayedPages - 3) >= currentPage) {
+      pageNumbers.push("...");
+    }
   }
 
   // 最後のページを追加
-  if (totalPages > 1) {
+  if (totalPages >= 2) {
     pageNumbers.push(totalPages);
   }
 
