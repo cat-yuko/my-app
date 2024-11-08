@@ -3,10 +3,12 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-export default function ThreeScene2({ filrPath }: { filrPath: string }) {
+export default function ThreeScene2({ filePath }: { filePath: string }) {
   const mountRef = useRef<HTMLDivElement>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const [scene, setScene] = useState<THREE.Scene | null>(null);
+  // 元のopacityを保存
+  const originalOpacityRef = useRef<number | null>(null);
 
   useEffect(() => {
     const scene = new THREE.Scene();
@@ -38,16 +40,23 @@ export default function ThreeScene2({ filrPath }: { filrPath: string }) {
 
     const loader = new GLTFLoader();
     loader.load(
-      filrPath,
+      filePath,
       (gltf) => {
         const model = gltf.scene;
         model.scale.set(30, 30, 30);
         scene.add(model);
         setScene(scene);
+
+        // 初期opacityを保存
+        const mesh = model.children.find(child => (child as THREE.Mesh).material) as THREE.Mesh;
+        if (mesh && mesh.material) {
+          const material = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
+          originalOpacityRef.current = material.opacity; 
+        }
       },
       undefined,
       (error) => {
-        console.error("An error occurred while loading the model:", error);
+        console.error("モデルの読み込み中にエラーが発生しました:", error);
       }
     );
 
@@ -60,20 +69,22 @@ export default function ThreeScene2({ filrPath }: { filrPath: string }) {
     render();
 
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
+      if (camera) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      }
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener("resize", handleResize);
 
     return () => {
-      if (animationId) cancelAnimationFrame(animationId);
+      cancelAnimationFrame(animationId);
       mountRef.current?.removeChild(renderer.domElement);
       renderer.dispose();
       controls.dispose();
       window.removeEventListener("resize", handleResize);
     };
-  }, [filrPath]);
+  }, [filePath]);
 
   const setMaterialTransparency = useCallback(
     (material: THREE.Material | THREE.Material[], opacity: number) => {
@@ -86,13 +97,12 @@ export default function ThreeScene2({ filrPath }: { filrPath: string }) {
         material.transparent = true;
         material.opacity = opacity;
       }
-    },
-    []
+    }, []
   );
 
   const handleClick = useCallback(
     (event: React.MouseEvent) => {
-      if (!scene || !cameraRef.current) return;
+      if (!scene || !cameraRef.current|| originalOpacityRef.current === null) return;
 
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
@@ -111,7 +121,7 @@ export default function ThreeScene2({ filrPath }: { filrPath: string }) {
           const currentOpacity = Array.isArray(object.material)
             ? object.material[0].opacity
             : object.material.opacity;
-          const newOpacity = currentOpacity === 1 ? 0.5 : 1;
+          const newOpacity = currentOpacity === originalOpacityRef.current ? 0.5 : originalOpacityRef.current;
           setMaterialTransparency(object.material, newOpacity);
         }
       }
